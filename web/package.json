@@ -14,9 +14,14 @@
   },
   "dependencies": {
     "@shopify/shopify-app-express": "^5.0.8",
+    "@shopify/shopify-app-session-storage-postgresql": "^4.0.16",
     "@shopify/shopify-app-session-storage-sqlite": "^4.0.8",
+    "bull": "^4.16.5",
     "compression": "^1.7.4",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "fast-xml-parser": "^5.0.9",
+    "knex": "^3.1.0",
     "serve-static": "^1.14.1"
   },
   "devDependencies": {

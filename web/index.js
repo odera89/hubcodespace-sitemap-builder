@@ -3,10 +3,12 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
-
 import shopify from "./shopify.js";
-import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
+import pagesCount from "./api/sitemap/pagesCount.js";
+import productsXml from "./api/sitemap/productsXml.js";
+import collectionsXml from "./api/sitemap/collectionsXml.js";
+import pagesXml from "./api/sitemap/pagesXml.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -36,38 +38,30 @@ app.post(
 // also add a proxy rule for them in web/frontend/vite.config.js
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
+app.use("/subscription/*", authenticateUser);
 
+async function authenticateUser(req, res, next) {
+  const shop = req?.query?.shop;
+  const storeName = await shopify?.config?.sessionStorage?.findSessionsByShop(
+    shop
+  );
+
+  if (shop === storeName?.[0]?.shop) {
+    next();
+  } else {
+    res.send("/account");
+  }
+}
 app.use(express.json());
 
-app.get("/api/products/count", async (_req, res) => {
-  const client = new shopify.api.clients.Graphql({
-    session: res.locals.shopify.session,
-  });
-
-  const countData = await client.request(`
-    query shopifyProductCount {
-      productsCount {
-        count
-      }
-    }
-  `);
-
-  res.status(200).send({ count: countData.data.productsCount.count });
+app.get("/sitemap/sitemap.xml", (req, res) => {
+  res.sendFile(`${process.cwd()}/sitemap.xml`);
 });
 
-app.post("/api/products", async (_req, res) => {
-  let status = 200;
-  let error = null;
-
-  try {
-    await productCreator(res.locals.shopify.session);
-  } catch (e) {
-    console.log(`Failed to process products/create: ${e.message}`);
-    status = 500;
-    error = e.message;
-  }
-  res.status(status).send({ success: status === 200, error });
-});
+app.get("/api/pagesCount", pagesCount);
+app.get("/api/productsXml", productsXml);
+app.get("/api/collectionsXml", collectionsXml);
+app.get("/api/pagesXml", pagesXml);
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
