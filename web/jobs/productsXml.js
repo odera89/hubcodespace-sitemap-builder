@@ -59,7 +59,7 @@ const productsXml = async (job, done) => {
     const sitemap = await handleReadFile(`${process?.cwd()}/sitemap.xml`);
     const parser = new XMLParser(options);
     const xmlObj = parser.parse(sitemap);
-    console.log(xmlObj, "prod");
+
     const productsArr = allProductsData?.map((item) => {
       return {
         loc: `https://${shop}/products/${item?.node?.handle}`,

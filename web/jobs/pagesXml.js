@@ -4,7 +4,7 @@ import { getSleepTime, sleep } from "../helpers/index.js";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { handleWriteFile } from "../helpers/writeFile.js";
 import { handleReadFile } from "../helpers/readFile.js";
-import { getCollections } from "../graphql/queries/collections/getCollections.js";
+import { getPages } from "../graphql/queries/pages/getPages.js";
 
 const pagesXml = async (job, done) => {
   try {
@@ -13,50 +13,44 @@ const pagesXml = async (job, done) => {
     const client = await new shopify.api.clients.Graphql({
       session,
     });
-    const fetchCollections = async (cursor, collections = []) => {
+    const fetchPages = async (cursor, pages = []) => {
       const variables = {};
       if (cursor) {
         variables.after = cursor;
       }
 
-      const allCollections = await client.query({
+      const allPages = await client.query({
         data: {
-          query: getCollections,
+          query: getPages,
           variables,
         },
       });
 
-      const checkQueryCostCollection = allCollections?.body?.extensions?.cost;
+      const checkQueryCostPages = allPages?.body?.extensions?.cost;
 
-      const checkLastResponseTimeCollection = new Date().getTime();
-      let sleepTimeCollection = await getSleepTime(
-        checkQueryCostCollection,
-        checkLastResponseTimeCollection
+      const checkLastResponseTimePages = new Date().getTime();
+      let sleepTimePages = await getSleepTime(
+        checkQueryCostPages,
+        checkLastResponseTimePages
       );
 
-      if ((sleepTimeCollection = !0)) {
-        await sleep(sleepTimeCollection);
+      if ((sleepTimePages = !0)) {
+        await sleep(sleepTimePages);
       }
 
-      if (!allCollections?.body?.data?.collections?.pageInfo?.hasNextPage) {
-        collections = [
-          ...collections,
-          ...allCollections?.body?.data?.collections?.edges,
-        ];
+      if (!allPages?.body?.data?.pages?.pageInfo?.hasNextPage) {
+        pages = [...pages, ...allPages?.body?.data?.pages?.edges];
 
-        return collections;
+        return pages;
       }
 
-      collections = [
-        ...collections,
-        ...allCollections?.body?.data?.collection?.edges,
-      ];
-      return fetchCollections(
-        allCollections?.body?.data?.collections?.pageInfo?.endCursor,
-        collections
+      pages = [...pages, ...allPages?.body?.data?.pages?.edges];
+      return fetchPages(
+        allPages?.body?.data?.pages?.pageInfo?.endCursor,
+        pages
       );
     };
-    const allCollectionsData = await fetchCollections();
+    const allPagesData = await fetchPages();
     const options = {
       format: true,
       attributeNamePrefix: "@",
@@ -66,42 +60,36 @@ const pagesXml = async (job, done) => {
     const parser = new XMLParser(options);
     const xmlObj = parser.parse(sitemap);
 
-    const collectionsArr = allCollectionsData?.map((item) => {
+    const pagesArr = allPagesData?.map((item) => {
       return {
-        loc: `https://${shop}/collections/${item?.node?.handle}`,
+        loc: `https://${shop}/pages/${item?.node?.handle}`,
         lastmod: new Date().toISOString(),
         priority: 1,
       };
     });
-    console.log(xmlObj, "obj");
-    let collectionsXml = { ...xmlObj };
-    if (!collectionsXml?.urlset?.["@xmlns"]) {
-      collectionsXml.urlset = {};
-      collectionsXml.urlset["@xmlns"] =
-        "http://www.sitemaps.org/schemas/sitemap/0.9";
-      collectionsXml.urlset.sitemap = [];
+
+    let pagesXml = { ...xmlObj };
+    if (!pagesXml?.urlset?.["@xmlns"]) {
+      pagesXml.urlset = {};
+      pagesXml.urlset["@xmlns"] = "http://www.sitemaps.org/schemas/sitemap/0.9";
+      pagesXml.urlset.sitemap = [];
     }
-    if (collectionsXml?.urlset?.sitemap?.length > 0) {
-      collectionsXml.urlset.sitemap = collectionsXml?.urlset?.sitemap?.filter(
-        (item) => !item?.loc?.includes("/collections/")
+    if (pagesXml?.urlset?.sitemap?.length > 0) {
+      pagesXml.urlset.sitemap = pagesXml?.urlset?.sitemap?.filter(
+        (item) => !item?.loc?.includes("/pages/")
       );
     } else {
-      collectionsXml.urlset.sitemap = [];
+      pagesXml.urlset.sitemap = [];
     }
 
-    collectionsXml.urlset.sitemap = [
-      ...collectionsXml?.urlset?.sitemap,
-      ...collectionsArr,
-    ];
+    pagesXml.urlset.sitemap = [...pagesXml?.urlset?.sitemap, ...pagesArr];
 
     const builder = new XMLBuilder(options);
-    const xmlDataStr = builder.build(collectionsXml);
+    const xmlDataStr = builder.build(pagesXml);
     const writeFileContent = await handleWriteFile(
       `${process?.cwd()}/sitemap.xml`,
       xmlDataStr
     );
-    console.log(xmlObj);
-    console.log(collectionsXml, "collections");
 
     done(null, { done: true });
   } catch (error) {

@@ -3,7 +3,7 @@
 client_id = "51877ece492ee8373a064bac89091cc8"
 name = "Hubcodespace Sitemap Builder"
 handle = "hubcodespace-sitemap-builder"
-application_url = "https://abroad-downloads-exams-houston.trycloudflare.com"
+application_url = "https://claire-lazy-bowling-skills.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,14 +19,14 @@ scopes = "read_content,read_products"
 
 [auth]
 redirect_urls = [
-  "https://abroad-downloads-exams-houston.trycloudflare.com/auth/callback",
-  "https://abroad-downloads-exams-houston.trycloudflare.com/auth/shopify/callback",
-  "https://abroad-downloads-exams-houston.trycloudflare.com/api/auth/callback"
+  "https://claire-lazy-bowling-skills.trycloudflare.com/auth/callback",
+  "https://claire-lazy-bowling-skills.trycloudflare.com/auth/shopify/callback",
+  "https://claire-lazy-bowling-skills.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://abroad-downloads-exams-houston.trycloudflare.com/sitemap"
-subpath = "tools"
+url = "https://claire-lazy-bowling-skills.trycloudflare.com/sitemap"
+subpath = "hubcodespace-sitemap-builder"
 prefix = "apps"
 
 [pos]

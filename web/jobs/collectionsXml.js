@@ -73,7 +73,7 @@ const collectionsXml = async (job, done) => {
         priority: 1,
       };
     });
-    console.log(xmlObj, "obj");
+
     let collectionsXml = { ...xmlObj };
     if (!collectionsXml?.urlset?.["@xmlns"]) {
       collectionsXml.urlset = {};
@@ -100,8 +100,6 @@ const collectionsXml = async (job, done) => {
       `${process?.cwd()}/sitemap.xml`,
       xmlDataStr
     );
-    console.log(xmlObj);
-    console.log(collectionsXml, "collections");
 
     done(null, { done: true });
   } catch (error) {

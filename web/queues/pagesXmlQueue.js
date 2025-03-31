@@ -3,7 +3,7 @@ import { redisCredentials, redisOptions } from "./config/config.js";
 import pagesXml from "../jobs/pagesXml.js";
 
 const pagesXmlQueue = new Queue(
-  "pagesXmlQueue",
+  "pageXmlQueue",
   redisCredentials(),
   redisOptions
 );
