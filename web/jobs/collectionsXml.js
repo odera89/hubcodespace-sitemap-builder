@@ -5,6 +5,7 @@ import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { handleWriteFile } from "../helpers/writeFile.js";
 import { handleReadFile } from "../helpers/readFile.js";
 import { getCollections } from "../graphql/queries/collections/getCollections.js";
+import queryBuilder from "../db.js";
 
 const collectionsXml = async (job, done) => {
   try {
@@ -13,6 +14,7 @@ const collectionsXml = async (job, done) => {
     const client = await new shopify.api.clients.Graphql({
       session,
     });
+    await queryBuilder("jobs-status").insert({ type: "collections" });
     const fetchCollections = async (cursor, collections = []) => {
       const variables = {};
       if (cursor) {
@@ -100,7 +102,12 @@ const collectionsXml = async (job, done) => {
       `${process?.cwd()}/sitemap.xml`,
       xmlDataStr
     );
-
+    await queryBuilder("history").insert({
+      type: "collections",
+      number_of_items: collectionsArr?.length,
+      last_updated: new Date(),
+    });
+    await queryBuilder("jobs-status").where({ type: "collections" }).del();
     done(null, { done: true });
   } catch (error) {
     console.log(error, "error");

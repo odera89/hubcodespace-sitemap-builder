@@ -5,6 +5,7 @@ import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { handleWriteFile } from "../helpers/writeFile.js";
 import { handleReadFile } from "../helpers/readFile.js";
 import { getArticles } from "../graphql/queries/articles/getArticles.js";
+import queryBuilder from "../db.js";
 
 const articlesXml = async (job, done) => {
   try {
@@ -13,6 +14,7 @@ const articlesXml = async (job, done) => {
     const client = await new shopify.api.clients.Graphql({
       session,
     });
+    await queryBuilder("jobs-status").insert({ type: "articles" });
     const fetchArticles = async (cursor, articles = []) => {
       const variables = {};
       if (cursor) {
@@ -96,7 +98,12 @@ const articlesXml = async (job, done) => {
       `${process?.cwd()}/sitemap.xml`,
       xmlDataStr
     );
-
+    await queryBuilder("history").insert({
+      type: "articles",
+      number_of_items: articlesArr?.length,
+      last_updated: new Date(),
+    });
+    await queryBuilder("jobs-status").where({ type: "articles" }).del();
     done(null, { done: true });
   } catch (error) {
     console.log(error, "error");

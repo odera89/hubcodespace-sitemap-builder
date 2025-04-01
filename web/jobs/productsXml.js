@@ -5,6 +5,7 @@ import { getSleepTime, sleep } from "../helpers/index.js";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { handleReadFile } from "../helpers/readFile.js";
 import { handleWriteFile } from "../helpers/writeFile.js";
+import queryBuilder from "../db.js";
 
 const productsXml = async (job, done) => {
   try {
@@ -13,6 +14,8 @@ const productsXml = async (job, done) => {
     const client = await new shopify.api.clients.Graphql({
       session,
     });
+
+    await queryBuilder("jobs-status").insert({ type: "products" });
     const fetchProducts = async (cursor, products = []) => {
       const variables = {};
       if (cursor) {
@@ -98,6 +101,12 @@ const productsXml = async (job, done) => {
       xmlDataStr
     );
 
+    await queryBuilder("history").insert({
+      type: "products",
+      number_of_items: productsArr?.length,
+      last_updated: new Date(),
+    });
+    await queryBuilder("jobs-status").where({ type: "products" }).del();
     done(null, { done: true });
   } catch (error) {
     console.log(error, "error");
