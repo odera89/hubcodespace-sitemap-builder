@@ -10,6 +10,7 @@ import productsXml from "./api/sitemap/productsXml.js";
 import collectionsXml from "./api/sitemap/collectionsXml.js";
 import pagesXml from "./api/sitemap/pagesXml.js";
 import articlesXml from "./api/sitemap/articlesXml.js";
+import checkSitemap from "./api/sitemap/checkSitemap.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -64,6 +65,7 @@ app.get("/api/productsXml", productsXml);
 app.get("/api/collectionsXml", collectionsXml);
 app.get("/api/pagesXml", pagesXml);
 app.get("/api/articlesXml", articlesXml);
+app.get("/api/checkSitemap", checkSitemap);
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
