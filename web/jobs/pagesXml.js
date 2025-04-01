@@ -1,4 +1,3 @@
-import { GraphqlQueryError } from "@shopify/shopify-api";
 import shopify from "../shopify.js";
 import { getSleepTime, sleep } from "../helpers/index.js";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
