@@ -3,7 +3,8 @@ export function up(knex) {
     tbl.increments();
     tbl.text("type").nullable();
     tbl.integer("number_of_items").nullable();
-    tbl.timestamp("last_updated").nullable();
+    tbl.timestamp("created_at").nullable();
+    tbl.timestamp("updated_at").nullable();
   });
 }
 

@@ -14,7 +14,11 @@ const articlesXml = async (job, done) => {
     const client = await new shopify.api.clients.Graphql({
       session,
     });
-    await queryBuilder("jobs-status").insert({ type: "articles" });
+    await queryBuilder("jobs-status").insert({
+      type: "articles",
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
     const fetchArticles = async (cursor, articles = []) => {
       const variables = {};
       if (cursor) {
@@ -101,19 +105,14 @@ const articlesXml = async (job, done) => {
     await queryBuilder("history").insert({
       type: "articles",
       number_of_items: articlesArr?.length,
-      last_updated: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
     });
     await queryBuilder("jobs-status").where({ type: "articles" }).del();
     done(null, { done: true });
   } catch (error) {
     console.log(error, "error");
-    if (error instanceof GraphqlQueryError) {
-      throw new Error(
-        `${error?.message}\n${JSON.stringify(error?.response, null, 2)}`
-      );
-    } else {
-      throw error;
-    }
+    await queryBuilder("jobs-status").where({ type: "articles" }).del();
   }
 };
 

@@ -15,7 +15,12 @@ const productsXml = async (job, done) => {
       session,
     });
 
-    await queryBuilder("jobs-status").insert({ type: "products" });
+    await queryBuilder("jobs-status").insert({
+      type: "products",
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
     const fetchProducts = async (cursor, products = []) => {
       const variables = {};
       if (cursor) {
@@ -91,8 +96,6 @@ const productsXml = async (job, done) => {
       ...productsArr,
     ];
 
-    done(null, { done: true });
-
     const builder = new XMLBuilder(options);
     const xmlDataStr = builder.build(productsXml);
 
@@ -104,19 +107,14 @@ const productsXml = async (job, done) => {
     await queryBuilder("history").insert({
       type: "products",
       number_of_items: productsArr?.length,
-      last_updated: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
     });
     await queryBuilder("jobs-status").where({ type: "products" }).del();
     done(null, { done: true });
   } catch (error) {
     console.log(error, "error");
-    if (error instanceof GraphqlQueryError) {
-      throw new Error(
-        `${error?.message}\n${JSON.stringify(error?.response, null, 2)}`
-      );
-    } else {
-      throw error;
-    }
+    await queryBuilder("jobs-status").where({ type: "products" }).del();
   }
 };
 

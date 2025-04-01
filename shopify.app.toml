@@ -3,7 +3,7 @@
 client_id = "51877ece492ee8373a064bac89091cc8"
 name = "Hubcodespace Sitemap Builder"
 handle = "hubcodespace-sitemap-builder"
-application_url = "https://exterior-worked-transaction-labels.trycloudflare.com"
+application_url = "https://employer-mill-approximately-lean.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,13 +19,13 @@ scopes = "read_content,read_products"
 
 [auth]
 redirect_urls = [
-  "https://exterior-worked-transaction-labels.trycloudflare.com/auth/callback",
-  "https://exterior-worked-transaction-labels.trycloudflare.com/auth/shopify/callback",
-  "https://exterior-worked-transaction-labels.trycloudflare.com/api/auth/callback"
+  "https://employer-mill-approximately-lean.trycloudflare.com/auth/callback",
+  "https://employer-mill-approximately-lean.trycloudflare.com/auth/shopify/callback",
+  "https://employer-mill-approximately-lean.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://exterior-worked-transaction-labels.trycloudflare.com/sitemap"
+url = "https://employer-mill-approximately-lean.trycloudflare.com/sitemap"
 subpath = "hubcodespace-sitemap-builder"
 prefix = "apps"
 
