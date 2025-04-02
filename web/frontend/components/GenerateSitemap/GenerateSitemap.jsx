@@ -1,7 +1,8 @@
-import { Button, Card, DataTable, Icon, Spinner, Text } from "@shopify/polaris";
+import { Button, Card, Icon, Spinner, Text } from "@shopify/polaris";
 import { RefreshIcon, CheckCircleIcon } from "@shopify/polaris-icons";
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
+import SitemapTable from "../GenerateSitemap/SitemapTable";
 
 const checkRunningJobs = async (setSitemapLoading, interval) => {
   try {
@@ -47,7 +48,7 @@ const getPagesCount = async (setPages, setLoading, setNextUpdate) => {
       },
     });
     const resultData = await result?.json();
-    if (resultData?.data) {
+    if (resultData?.data?.length > 0) {
       setPages(resultData?.data);
     }
 
@@ -136,7 +137,7 @@ const generateXml = async (sitemapLoading, setSitemapLoading) => {
 
 const GenerateSitemap = () => {
   const [nextUpdate, setNextUpdate] = useState("");
-  const [pages, setPages] = useState({});
+  const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sitemapLoading, setSitemapLoading] = useState({
     products: false,
@@ -169,12 +170,13 @@ const GenerateSitemap = () => {
     );
   }
 
-  const rows = Object?.keys(pages)?.map((item) => {
-    const count = pages?.[item];
+  const rows = pages?.map((item) => {
+    const count = item?.count;
+    const type = item?.type;
 
     return [
-      [item],
-      <Button loading={sitemapLoading?.[item]} variant="monochromePlain">
+      [type],
+      <Button loading={sitemapLoading?.[type]} variant="monochromePlain">
         created
       </Button>,
       count,
@@ -210,20 +212,14 @@ const GenerateSitemap = () => {
             : "Sitemap has generated"}
         </p>
       </div>
+
       <div className="mb-20">
-        <Card>
-          <DataTable
-            columnContentTypes={["text", "text", "text", "text", "text"]}
-            headings={[
-              "Sitemap",
-              "Status",
-              "#of items",
-              "Last Updated",
-              "Next Update",
-            ]}
-            rows={rows}
-          />
-        </Card>
+        <SitemapTable
+          setRows={setPages}
+          rows={pages}
+          sitemapLoading={sitemapLoading}
+          nextUpdate={nextUpdate}
+        />
       </div>
       <Button
         loading={sitemapIsLoading}

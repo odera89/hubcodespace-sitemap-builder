@@ -18,12 +18,24 @@ const pagesCount = async (req, res) => {
       ?.reduce((acc, curr) => {
         return acc + curr;
       }, 0);
-    const data = {
-      products: result?.body?.data?.productsCount?.count || 0,
-      collections: result?.body?.data?.collectionsCount?.count || 0,
-      pages: result?.body?.data?.pagesCount?.count || 0,
-      articles: articlesCount || 0,
-    };
+    const data = [
+      {
+        type: "products",
+        count: result?.body?.data?.productsCount?.count || 0,
+        id: 1,
+      },
+      {
+        type: "collections",
+        count: result?.body?.data?.collectionsCount?.count || 0,
+        id: 2,
+      },
+      {
+        type: "pages",
+        count: result?.body?.data?.pagesCount?.count || 0,
+        id: 3,
+      },
+      { type: "articles", count: articlesCount || 0, id: 4 },
+    ];
 
     res.status(200).send({
       data,
