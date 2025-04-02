@@ -2,8 +2,10 @@ import queues from "../../queues/config/index.js";
 
 const articlesXml = async (req, res) => {
   try {
+    const data = req?.body;
     const job = await queues?.articlesXmlQueue?.add({
       session: res?.locals?.shopify?.session,
+      data,
     });
 
     await job?.finished();

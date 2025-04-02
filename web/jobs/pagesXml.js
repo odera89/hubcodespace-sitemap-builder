@@ -10,6 +10,8 @@ const pagesXml = async (job, done) => {
   try {
     const session = job?.data?.session;
     const shop = session?.shop;
+    const index = job?.data?.data?.index;
+    const xmlArr = job?.data?.data?.xmlArr;
     const client = await new shopify.api.clients.Graphql({
       session,
     });
@@ -87,7 +89,45 @@ const pagesXml = async (job, done) => {
       pagesXml.urlset.sitemap = [];
     }
 
-    pagesXml.urlset.sitemap = [...pagesXml?.urlset?.sitemap, ...pagesArr];
+    const xmlNewArr = [...pagesXml.urlset.sitemap];
+    let newArr = [];
+
+    xmlArr?.forEach((item) => {
+      const firstIndex = xmlNewArr?.findIndex((i) =>
+        i?.loc?.includes(item?.slug)
+      );
+
+      const lastIndex = xmlNewArr?.findLastIndex((i) =>
+        i?.loc?.includes(item?.slug)
+      );
+
+      if (firstIndex >= 0 && lastIndex >= 0) {
+        const sliceArr = xmlNewArr?.slice(firstIndex, lastIndex + 1);
+        newArr = [
+          ...newArr,
+          { type: item?.type, arr: sliceArr, index: item?.index },
+        ];
+      }
+    });
+    newArr = [
+      ...newArr,
+      {
+        type: xmlArr?.find((item) => item?.index === index)?.type,
+        arr: pagesArr,
+        index: index,
+      },
+    ];
+
+    let xmlData = [];
+
+    newArr = newArr?.sort((a, b) => a?.index - b?.index);
+    newArr?.forEach((item) => {
+      xmlData.push(item?.arr);
+    });
+
+    xmlData = xmlData?.reduce((acc, el) => acc.concat(el), []);
+
+    pagesXml.urlset.sitemap = xmlData;
 
     const builder = new XMLBuilder(options);
     const xmlDataStr = builder.build(pagesXml);

@@ -63,10 +63,10 @@ app.get("/sitemap/sitemap.xml", (req, res) => {
 });
 
 app.get("/api/pagesCount", pagesCount);
-app.get("/api/productsXml", productsXml);
-app.get("/api/collectionsXml", collectionsXml);
-app.get("/api/pagesXml", pagesXml);
-app.get("/api/articlesXml", articlesXml);
+app.post("/api/productsXml", productsXml);
+app.post("/api/collectionsXml", collectionsXml);
+app.post("/api/pagesXml", pagesXml);
+app.post("/api/articlesXml", articlesXml);
 app.get("/api/checkSitemap", checkSitemap);
 app.post("/api/updateSettings", updateSettings);
 app.get("/api/getSettings", getSettings);

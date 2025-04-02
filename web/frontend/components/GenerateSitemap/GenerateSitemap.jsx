@@ -69,42 +69,83 @@ const getPagesCount = async (setPages, setLoading, setNextUpdate) => {
   }
 };
 
-const generateXml = async (sitemapLoading, setSitemapLoading) => {
+const generateXml = async (setSitemapLoading, pages) => {
   setSitemapLoading({
     products: true,
     collections: true,
     pages: true,
     articles: true,
   });
+
   try {
-    const functionsObj = {};
-
-    functionsObj.products = fetch(`/api/productsXml`, {
-      method: "GET",
+    const functionsObj = {
+      products: {
+        index: pages?.findIndex((item) => item?.type === "products") || 0,
+      },
+      collections: {
+        index: pages?.findIndex((item) => item?.type === "collections") || 0,
+      },
+      pages: { index: pages?.findIndex((item) => item?.type === "pages") } || 0,
+      articles: {
+        index: pages?.findIndex((item) => item?.type === "articles") || 0,
+      },
+    };
+    const xmlArr = [
+      {
+        type: "products",
+        index: functionsObj?.products?.index,
+        slug: "/products/",
+      },
+      {
+        type: "collections",
+        index: functionsObj?.collections?.index,
+        slug: "/collections/",
+      },
+      {
+        type: "pages",
+        index: functionsObj?.pages?.index,
+        slug: "/pages/",
+      },
+      {
+        type: "articles",
+        index: functionsObj?.articles?.index,
+        slug: "/blogs/",
+      },
+    ];
+    console.log(xmlArr);
+    functionsObj.products.job = fetch(`/api/productsXml`, {
+      method: "POST",
+      body: JSON?.stringify({ index: functionsObj?.products?.index, xmlArr }),
       headers: {
         Accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
       },
     });
 
-    functionsObj.collections = fetch(`/api/collectionsXml`, {
-      method: "GET",
+    functionsObj.collections.job = fetch(`/api/collectionsXml`, {
+      method: "POST",
+      body: JSON?.stringify({
+        index: functionsObj?.collections?.index,
+        xmlArr,
+      }),
       headers: {
         Accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
       },
     });
 
-    functionsObj.pages = fetch(`/api/pagesXml`, {
-      method: "GET",
+    functionsObj.pages.job = fetch(`/api/pagesXml`, {
+      method: "POST",
+      body: JSON?.stringify({ index: functionsObj?.pages?.index, xmlArr }),
       headers: {
         Accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
       },
     });
 
-    functionsObj.articles = fetch(`/api/articlesXml`, {
-      method: "GET",
+    functionsObj.articles.job = fetch(`/api/articlesXml`, {
+      method: "POST",
+      body: JSON?.stringify({ index: functionsObj?.articles?.index, xmlArr }),
       headers: {
         Accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
@@ -119,7 +160,7 @@ const generateXml = async (sitemapLoading, setSitemapLoading) => {
 
     const result = await Promise.all(
       Object?.keys(functionsObj)?.map(async (item) => {
-        const resultData = await functionsObj?.[item];
+        const resultData = await functionsObj?.[item]?.job;
         obj[item] = false;
         setSitemapLoading({ ...obj });
         return resultData;
@@ -224,7 +265,7 @@ const GenerateSitemap = () => {
       <Button
         loading={sitemapIsLoading}
         onClick={() => {
-          generateXml(sitemapLoading, setSitemapLoading);
+          generateXml(setSitemapLoading, pages);
         }}
         icon={RefreshIcon}
         variant="primary"

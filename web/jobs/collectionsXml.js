@@ -9,6 +9,8 @@ import queryBuilder from "../db.js";
 const collectionsXml = async (job, done) => {
   try {
     const session = job?.data?.session;
+    const index = job?.data?.data?.index;
+    const xmlArr = job?.data?.data?.xmlArr;
     const shop = session?.shop;
     const client = await new shopify.api.clients.Graphql({
       session,
@@ -94,10 +96,46 @@ const collectionsXml = async (job, done) => {
       collectionsXml.urlset.sitemap = [];
     }
 
-    collectionsXml.urlset.sitemap = [
-      ...collectionsXml?.urlset?.sitemap,
-      ...collectionsArr,
+    const xmlNewArr = [...collectionsXml.urlset.sitemap];
+
+    let newArr = [];
+
+    xmlArr?.forEach((item) => {
+      const firstIndex = xmlNewArr?.findIndex((i) =>
+        i?.loc?.includes(item?.slug)
+      );
+
+      const lastIndex = xmlNewArr?.findLastIndex((i) =>
+        i?.loc?.includes(item?.slug)
+      );
+
+      if (firstIndex >= 0 && lastIndex >= 0) {
+        const sliceArr = xmlNewArr?.slice(firstIndex, lastIndex + 1);
+        newArr = [
+          ...newArr,
+          { type: item?.type, arr: sliceArr, index: item?.index },
+        ];
+      }
+    });
+    newArr = [
+      ...newArr,
+      {
+        type: xmlArr?.find((item) => item?.index === index)?.type,
+        arr: collectionsArr,
+        index: index,
+      },
     ];
+
+    let xmlData = [];
+
+    newArr = newArr?.sort((a, b) => a?.index - b?.index);
+    newArr?.forEach((item) => {
+      xmlData.push(item?.arr);
+    });
+
+    xmlData = xmlData?.reduce((acc, el) => acc.concat(el), []);
+
+    collectionsXml.urlset.sitemap = xmlData;
 
     const builder = new XMLBuilder(options);
     const xmlDataStr = builder.build(collectionsXml);
