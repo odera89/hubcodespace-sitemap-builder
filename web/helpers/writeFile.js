@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "fs";
+import { writeFile } from "fs";
 
 export const handleWriteFile = async function (path, content) {
   return new Promise((resolve, reject) => {

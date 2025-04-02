@@ -112,8 +112,8 @@ const generateXml = async (setSitemapLoading, pages) => {
         slug: "/blogs/",
       },
     ];
-    console.log(xmlArr);
-    functionsObj.products.job = fetch(`/api/productsXml`, {
+
+    functionsObj.products.job = await fetch(`/api/productsXml`, {
       method: "POST",
       body: JSON?.stringify({ index: functionsObj?.products?.index, xmlArr }),
       headers: {
@@ -122,7 +122,7 @@ const generateXml = async (setSitemapLoading, pages) => {
       },
     });
 
-    functionsObj.collections.job = fetch(`/api/collectionsXml`, {
+    functionsObj.collections.job = await fetch(`/api/collectionsXml`, {
       method: "POST",
       body: JSON?.stringify({
         index: functionsObj?.collections?.index,
@@ -134,7 +134,7 @@ const generateXml = async (setSitemapLoading, pages) => {
       },
     });
 
-    functionsObj.pages.job = fetch(`/api/pagesXml`, {
+    functionsObj.pages.job = await fetch(`/api/pagesXml`, {
       method: "POST",
       body: JSON?.stringify({ index: functionsObj?.pages?.index, xmlArr }),
       headers: {
@@ -143,7 +143,7 @@ const generateXml = async (setSitemapLoading, pages) => {
       },
     });
 
-    functionsObj.articles.job = fetch(`/api/articlesXml`, {
+    functionsObj.articles.job = await fetch(`/api/articlesXml`, {
       method: "POST",
       body: JSON?.stringify({ index: functionsObj?.articles?.index, xmlArr }),
       headers: {
@@ -161,6 +161,7 @@ const generateXml = async (setSitemapLoading, pages) => {
     const result = await Promise.all(
       Object?.keys(functionsObj)?.map(async (item) => {
         const resultData = await functionsObj?.[item]?.job;
+
         obj[item] = false;
         setSitemapLoading({ ...obj });
         return resultData;

@@ -3,7 +3,7 @@
 client_id = "51877ece492ee8373a064bac89091cc8"
 name = "Hubcodespace Sitemap Builder"
 handle = "hubcodespace-sitemap-builder"
-application_url = "https://florida-constitution-croatia-ends.trycloudflare.com"
+application_url = "https://viewers-affair-establishing-classic.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,13 +19,13 @@ scopes = "read_content,read_products"
 
 [auth]
 redirect_urls = [
-  "https://florida-constitution-croatia-ends.trycloudflare.com/auth/callback",
-  "https://florida-constitution-croatia-ends.trycloudflare.com/auth/shopify/callback",
-  "https://florida-constitution-croatia-ends.trycloudflare.com/api/auth/callback"
+  "https://viewers-affair-establishing-classic.trycloudflare.com/auth/callback",
+  "https://viewers-affair-establishing-classic.trycloudflare.com/auth/shopify/callback",
+  "https://viewers-affair-establishing-classic.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://florida-constitution-croatia-ends.trycloudflare.com/sitemap"
+url = "https://viewers-affair-establishing-classic.trycloudflare.com/sitemap"
 subpath = "hubcodespace-sitemap-builder"
 prefix = "apps"
 
