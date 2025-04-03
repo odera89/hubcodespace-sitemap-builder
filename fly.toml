@@ -14,8 +14,8 @@ primary_region = 'otp'
   PORT = "8081"
   SHOPIFY_APP_URL = "https://hbs-sitemap-builder.fly.dev/"
   HOST = "https://hbs-sitemap-builder.fly.dev/"
-  SHOPIFY_API_KEY = "51877ece492ee8373a064bac89091cc8"
-  SHOPIFY_API_SECRET = "fee92b65538a00ccf589ec5c7c4c7bb6"
+  SHOPIFY_API_KEY = "2afd641bcb61d434872d0ad14a24fbf8"
+  SHOPIFY_API_SECRET = "6749f590be78a76f7396335e15b0a5e9"
   SCOPES = "read_content,read_products"
   REDIS_URL = "redis://default:a7282c2aec0247aaadbd343a8e662bfb@fly-hbs-sitemap-builder-redis.upstash.io:6379"
 
