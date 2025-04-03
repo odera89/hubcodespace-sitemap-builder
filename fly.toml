@@ -1,0 +1,33 @@
+# fly.toml app configuration file generated for hbs-sitemap-builder on 2025-04-03T09:26:15+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'hbs-sitemap-builder'
+primary_region = 'otp'
+
+[build]
+
+[env]
+  APP_ENV = "production"
+  NODE_ENV = "production"
+  PORT = "8081"
+  SHOPIFY_APP_URL = "https://hbs-sitemap-builder.fly.dev/"
+  HOST = "https://hbs-sitemap-builder.fly.dev/"
+  SHOPIFY_API_KEY = "51877ece492ee8373a064bac89091cc8"
+  SHOPIFY_API_SECRET = "fee92b65538a00ccf589ec5c7c4c7bb6"
+  SCOPES = "read_content,read_products"
+  REDIS_URL = "redis://default:a7282c2aec0247aaadbd343a8e662bfb@fly-hbs-sitemap-builder-redis.upstash.io:6379"
+
+
+
+[http_service]
+  internal_port = 8081
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  size = 'shared-cpu-1x'

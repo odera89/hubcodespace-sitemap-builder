@@ -1,11 +1,10 @@
 import Queue from "bull";
-import { redisCredentials, redisOptions } from "./config/config.js";
+import { redisCredentials } from "./config/config.js";
 import collectionsXml from "../jobs/collectionsXml.js";
 
 const collectionsXmlQueue = new Queue(
   "collectionsXmlQueue",
-  redisCredentials(),
-  redisOptions
+  redisCredentials()
 );
 
 collectionsXmlQueue.process(collectionsXml);
