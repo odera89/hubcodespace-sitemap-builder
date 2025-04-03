@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "51877ece492ee8373a064bac89091cc8"
-name = "Hubcodespace Sitemap Builder"
-handle = "hubcodespace-sitemap-builder"
-application_url = "https://viewers-affair-establishing-classic.trycloudflare.com"
+name = "Hubcodespace Sitemap - DEV"
+handle = "hubcodespace-sitemap-builder-dev"
+application_url = "https://calls-sleeps-bench-blame.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,13 +19,13 @@ scopes = "read_content,read_products"
 
 [auth]
 redirect_urls = [
-  "https://viewers-affair-establishing-classic.trycloudflare.com/auth/callback",
-  "https://viewers-affair-establishing-classic.trycloudflare.com/auth/shopify/callback",
-  "https://viewers-affair-establishing-classic.trycloudflare.com/api/auth/callback"
+  "https://calls-sleeps-bench-blame.trycloudflare.com/auth/callback",
+  "https://calls-sleeps-bench-blame.trycloudflare.com/auth/shopify/callback",
+  "https://calls-sleeps-bench-blame.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://viewers-affair-establishing-classic.trycloudflare.com/sitemap"
+url = "https://calls-sleeps-bench-blame.trycloudflare.com/sitemap"
 subpath = "hubcodespace-sitemap-builder"
 prefix = "apps"
 
