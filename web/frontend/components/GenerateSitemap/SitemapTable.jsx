@@ -14,9 +14,102 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button, Card, Icon, InlineStack } from "@shopify/polaris";
-import { addHours, format } from "date-fns";
+import {
+  format,
+  addMonths,
+  setHours,
+  getHours,
+  setMinutes,
+  getMinutes,
+  setDay,
+  addWeeks,
+  getDay,
+  addDays,
+} from "date-fns";
 import { useState } from "react";
 import { DragHandleIcon } from "@shopify/polaris-icons";
+
+const DAYS_DATA = [
+  { value: 1, day: "monday" },
+  { value: 2, day: "tuesday" },
+  { value: 3, day: "wednesday" },
+  { value: 4, day: "thursday" },
+  { value: 5, day: "friday" },
+  { value: 6, day: "saturday" },
+  { value: 7, day: "sunday" },
+];
+
+const getNextWeekday = (date, targetDay) => {
+  const currentDay = getDay(date);
+  const daysToAdd = (targetDay - currentDay + 7) % 7 || 7;
+  return addDays(date, daysToAdd);
+};
+
+const handleNextUpdate = (settings, last_updated) => {
+  const frequency = settings?.find((item) => item?.frequency)?.frequency;
+  let nextUpdate = "never";
+  let settingsData = settings;
+  let day = "";
+  let hour = "";
+  let minutes = "";
+  const lastDate = last_updated ? new Date(last_updated) : new Date();
+  switch (frequency) {
+    case "daily":
+      const days = settingsData?.map(
+        (item) => DAYS_DATA?.find((i) => i?.day === item?.on)?.value
+      );
+      hour = settingsData?.[0]?.hour ? getHours(settingsData?.[0]?.hour) : "";
+      minutes = settingsData?.[0]?.hour
+        ? getMinutes(settingsData?.[0]?.hour)
+        : 0;
+      const lastDay = getDay(lastDate);
+      const nextDay = days?.find((item) => item > lastDay) || days?.[0];
+      const nextDate = getNextWeekday(lastDate, nextDay);
+
+      if (nextDate && hour) {
+        nextUpdate = format(
+          setHours(setMinutes(nextDate, minutes), hour),
+          "yyyy-MM-dd HH:mm"
+        );
+      }
+
+      break;
+    case "weekly":
+      settingsData = settings?.[0];
+      day = DAYS_DATA?.find((item) => item?.day === settingsData?.on)?.value;
+      hour = settingsData?.hour ? getHours(settingsData?.hour) : "";
+      minutes = settingsData?.hour ? getMinutes(settingsData?.hour) : 0;
+      if (day && hour) {
+        nextUpdate = format(
+          setHours(
+            setMinutes(addWeeks(setDay(lastDate, day), 1), minutes),
+            hour
+          ),
+          "yyyy-MM-dd HH:mm"
+        );
+      }
+      break;
+    case "monthly":
+      settingsData = settings?.[0];
+      day = settingsData?.day;
+      hour = settingsData?.hour ? getHours(settingsData?.hour) : "";
+      minutes = settingsData?.hour ? getMinutes(settingsData?.hour) : 0;
+      if (day && hour) {
+        nextUpdate = format(
+          setHours(
+            setMinutes(addMonths(setDay(lastDate, day + 1), 1), minutes),
+            hour
+          ),
+          "yyyy-MM-dd HH:mm"
+        );
+      }
+
+      break;
+    default:
+      break;
+  }
+  return nextUpdate;
+};
 
 export const Row = ({
   id,
@@ -24,7 +117,7 @@ export const Row = ({
   drag,
   sitemapLoading,
   count,
-  updateInterval,
+  settings,
   last_updated,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -34,17 +127,8 @@ export const Row = ({
     transition,
     transform: CSS.Transform.toString(transform),
   };
+  const nextUpdate = handleNextUpdate(settings, last_updated);
 
-  const nextUpdate =
-    updateInterval >= 0
-      ? format(
-          addHours(
-            last_updated ? new Date(last_updated) : new Date(),
-            updateInterval
-          ),
-          "yyyy-MM-dd HH:mm"
-        )
-      : "";
   const lastUpdated = last_updated
     ? format(new Date(last_updated), "yyyy-MM-dd")
     : "";
@@ -82,7 +166,7 @@ const SitemapTable = (props) => {
   const rows = props?.rows;
   const setRows = props?.setRows;
   const sitemapLoading = props?.sitemapLoading;
-  const updateInterval = props?.updateInterval;
+  const settings = props?.settings;
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -131,7 +215,7 @@ const SitemapTable = (props) => {
                 {...row}
                 drag={drag}
                 sitemapLoading={sitemapLoading}
-                updateInterval={updateInterval}
+                settings={settings}
               />
             ))}
           </SortableContext>

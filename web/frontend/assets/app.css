@@ -59,3 +59,13 @@
 .table tr:last-of-type td {
   border-bottom: 0;
 }
+
+.date-picker-wrapper input {
+  border: 1px solid rgba(138, 138, 138, 1);
+  border-radius: 8px;
+  height: 32px;
+  padding: 0 10px;
+}
+.date-picker-wrapper input:focus-visible {
+  outline: none;
+}

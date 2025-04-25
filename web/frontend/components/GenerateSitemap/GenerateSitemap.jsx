@@ -37,7 +37,7 @@ const checkRunningJobs = async (setSitemapLoading, interval) => {
   } catch {}
 };
 
-const getPagesCount = async (setPages, setLoading, setUpdateInterval) => {
+const getPagesCount = async (setPages, setLoading, setSettings) => {
   try {
     const result = await fetch(`/api/pagesCount`, {
       method: "GET",
@@ -59,8 +59,8 @@ const getPagesCount = async (setPages, setLoading, setUpdateInterval) => {
       },
     });
     const settings = await settingsData?.json();
-    if (settings?.data?.update_interval) {
-      setUpdateInterval(settings?.data?.update_interval);
+    if (settings?.data?.length > 0) {
+      setSettings(settings?.data);
     }
     setLoading(false);
   } catch {
@@ -177,7 +177,7 @@ const generateXml = async (setSitemapLoading, pages) => {
 };
 
 const GenerateSitemap = () => {
-  const [updateInterval, setUpdateInterval] = useState("");
+  const [settings, setSettings] = useState([]);
   const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sitemapLoading, setSitemapLoading] = useState({
@@ -196,7 +196,7 @@ const GenerateSitemap = () => {
       checkRunningJobs(setSitemapLoading, interval?.current);
     }, 2000);
     checkRunningJobs(setSitemapLoading, interval?.current);
-    getPagesCount(setPages, setLoading, setUpdateInterval);
+    getPagesCount(setPages, setLoading, setSettings);
 
     return () => {
       clearInterval(interval?.current);
@@ -244,7 +244,7 @@ const GenerateSitemap = () => {
           setRows={setPages}
           rows={pages}
           sitemapLoading={sitemapLoading}
-          updateInterval={updateInterval}
+          settings={settings}
         />
       </div>
       <Button

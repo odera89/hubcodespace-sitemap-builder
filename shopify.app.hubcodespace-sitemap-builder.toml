@@ -3,7 +3,7 @@
 client_id = "51877ece492ee8373a064bac89091cc8"
 name = "Hubcodespace Sitemap - DEV"
 handle = "hubcodespace-sitemap-builder-dev"
-application_url = "https://darkness-treating-clone-location.trycloudflare.com"
+application_url = "https://spa-main-inbox-gary.trycloudflare.com"
 embedded = true
 
 [build]
@@ -18,13 +18,13 @@ scopes = "read_content,read_products"
 
 [auth]
 redirect_urls = [
-  "https://darkness-treating-clone-location.trycloudflare.com/auth/callback",
-  "https://darkness-treating-clone-location.trycloudflare.com/auth/shopify/callback",
-  "https://darkness-treating-clone-location.trycloudflare.com/api/auth/callback"
+  "https://spa-main-inbox-gary.trycloudflare.com/auth/callback",
+  "https://spa-main-inbox-gary.trycloudflare.com/auth/shopify/callback",
+  "https://spa-main-inbox-gary.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://darkness-treating-clone-location.trycloudflare.com/sitemap"
+url = "https://spa-main-inbox-gary.trycloudflare.com/sitemap"
 subpath = "hubcodespace-sitemap-builder"
 prefix = "apps"
 
