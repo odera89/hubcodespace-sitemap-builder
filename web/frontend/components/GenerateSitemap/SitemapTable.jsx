@@ -14,11 +14,19 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button, Card, Icon, InlineStack } from "@shopify/polaris";
-import { format } from "date-fns";
+import { addHours, format } from "date-fns";
 import { useState } from "react";
 import { DragHandleIcon } from "@shopify/polaris-icons";
 
-export const Row = ({ id, type, drag, sitemapLoading, count, nextUpdate }) => {
+export const Row = ({
+  id,
+  type,
+  drag,
+  sitemapLoading,
+  count,
+  updateInterval,
+  last_updated,
+}) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -26,6 +34,20 @@ export const Row = ({ id, type, drag, sitemapLoading, count, nextUpdate }) => {
     transition,
     transform: CSS.Transform.toString(transform),
   };
+
+  const nextUpdate =
+    updateInterval >= 0
+      ? format(
+          addHours(
+            last_updated ? new Date(last_updated) : new Date(),
+            updateInterval
+          ),
+          "yyyy-MM-dd HH:mm"
+        )
+      : "";
+  const lastUpdated = last_updated
+    ? format(new Date(last_updated), "yyyy-MM-dd")
+    : "";
 
   return (
     <tr style={{ ...style, cursor: drag ? "grabbing" : "" }} className="row">
@@ -49,8 +71,8 @@ export const Row = ({ id, type, drag, sitemapLoading, count, nextUpdate }) => {
         </Button>
       </td>
       <td>{count}</td>
-      <td>2022-11-23</td>
-      <td>{nextUpdate ? format(nextUpdate, "yyyy-MM-dd") : ""}</td>
+      <td>{lastUpdated}</td>
+      <td>{nextUpdate}</td>
     </tr>
   );
 };
@@ -60,7 +82,7 @@ const SitemapTable = (props) => {
   const rows = props?.rows;
   const setRows = props?.setRows;
   const sitemapLoading = props?.sitemapLoading;
-  const nextUpdate = props?.nextUpdate;
+  const updateInterval = props?.updateInterval;
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -109,7 +131,7 @@ const SitemapTable = (props) => {
                 {...row}
                 drag={drag}
                 sitemapLoading={sitemapLoading}
-                nextUpdate={nextUpdate}
+                updateInterval={updateInterval}
               />
             ))}
           </SortableContext>

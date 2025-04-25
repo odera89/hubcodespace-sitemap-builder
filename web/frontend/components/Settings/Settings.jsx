@@ -1,14 +1,18 @@
-import { Box, Button, Card, Page, Spinner } from "@shopify/polaris";
-import DateTimePicker from "../DatePicker/DatePicker";
+import { Box, Button, Card, Page, Spinner, TextField } from "@shopify/polaris";
 import { useEffect, useState } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-const handleSave = async (setLoading, nextUpdate, shopify) => {
+const handleSave = async (setLoading, updateInterval, shopify) => {
   setLoading(true);
   try {
+    if (updateInterval < 0) {
+      shopify?.toast?.show("Update interval must be greater than 0");
+      setLoading(false);
+      return;
+    }
     const result = await fetch(`/api/updateSettings`, {
       method: "POST",
-      body: JSON?.stringify({ nextUpdate }),
+      body: JSON?.stringify({ updateInterval }),
       headers: {
         Accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
@@ -29,7 +33,7 @@ const handleSave = async (setLoading, nextUpdate, shopify) => {
   }
 };
 
-const getSettings = async (setLoading, setNextUpdate) => {
+const getSettings = async (setLoading, setUpdateInterval) => {
   try {
     const result = await fetch(`/api/getSettings`, {
       method: "GET",
@@ -39,8 +43,9 @@ const getSettings = async (setLoading, setNextUpdate) => {
       },
     });
     const resultData = await result?.json();
-    if (resultData?.data?.next_update) {
-      setNextUpdate(resultData?.data?.next_update);
+
+    if (resultData?.data?.update_interval) {
+      setUpdateInterval(resultData?.data?.update_interval);
     }
 
     setLoading(false);
@@ -50,13 +55,13 @@ const getSettings = async (setLoading, setNextUpdate) => {
 };
 
 const Settings = () => {
-  const [nextUpdate, setNextUpdate] = useState(new Date());
+  const [updateInterval, setUpdateInterval] = useState(0);
   const [loadingButton, setLoadingButton] = useState(false);
   const [loading, setLoading] = useState(true);
   const shopify = useAppBridge();
 
   useEffect(() => {
-    getSettings(setLoading, setNextUpdate);
+    getSettings(setLoading, setUpdateInterval);
   }, []);
 
   if (loading) {
@@ -76,7 +81,7 @@ const Settings = () => {
           tone="success"
           loading={loadingButton}
           onClick={() => {
-            handleSave(setLoadingButton, nextUpdate, shopify);
+            handleSave(setLoadingButton, updateInterval, shopify);
           }}
         >
           Save
@@ -85,10 +90,12 @@ const Settings = () => {
     >
       <Card padding={{ xs: 500 }}>
         <Box maxWidth="250px">
-          <DateTimePicker
-            dateLabel="Next Update"
-            initialValue={nextUpdate}
-            onChange={(e) => setNextUpdate(e)}
+          <TextField
+            type="number"
+            label="Update Interval"
+            value={updateInterval}
+            initialValue={updateInterval}
+            onChange={(e) => setUpdateInterval(e)}
           />
         </Box>
       </Card>

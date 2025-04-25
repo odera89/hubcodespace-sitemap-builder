@@ -2,22 +2,23 @@ import queryBuilder from "../../db.js";
 
 const updateSettings = async (req, res) => {
   try {
-    const { nextUpdate } = req?.body;
+    const { updateInterval } = req?.body;
     const settings = await queryBuilder("settings").limit(1);
     const settingsData = settings?.[0];
-    if (!nextUpdate) {
+
+    if (!updateInterval) {
       res.status(200).send({ error: "Update settings failed." });
       return;
     }
 
     if (settingsData?.id) {
       await queryBuilder("settings").where("id", settingsData?.id).update({
-        next_update: nextUpdate,
+        update_interval: updateInterval,
         updated_at: new Date(),
       });
     } else {
       await queryBuilder("settings").insert({
-        next_update: nextUpdate,
+        update_interval: updateInterval,
         created_at: new Date(),
         updated_at: new Date(),
       });

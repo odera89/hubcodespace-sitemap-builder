@@ -1,7 +1,6 @@
 import { Button, Card, Icon, Spinner, Text } from "@shopify/polaris";
 import { RefreshIcon, CheckCircleIcon } from "@shopify/polaris-icons";
 import { useEffect, useRef, useState } from "react";
-import { format } from "date-fns";
 import SitemapTable from "../GenerateSitemap/SitemapTable";
 
 const checkRunningJobs = async (setSitemapLoading, interval) => {
@@ -38,7 +37,7 @@ const checkRunningJobs = async (setSitemapLoading, interval) => {
   } catch {}
 };
 
-const getPagesCount = async (setPages, setLoading, setNextUpdate) => {
+const getPagesCount = async (setPages, setLoading, setUpdateInterval) => {
   try {
     const result = await fetch(`/api/pagesCount`, {
       method: "GET",
@@ -60,8 +59,8 @@ const getPagesCount = async (setPages, setLoading, setNextUpdate) => {
       },
     });
     const settings = await settingsData?.json();
-    if (settings?.data?.next_update) {
-      setNextUpdate(settings?.data?.next_update);
+    if (settings?.data?.update_interval) {
+      setUpdateInterval(settings?.data?.update_interval);
     }
     setLoading(false);
   } catch {
@@ -178,7 +177,7 @@ const generateXml = async (setSitemapLoading, pages) => {
 };
 
 const GenerateSitemap = () => {
-  const [nextUpdate, setNextUpdate] = useState("");
+  const [updateInterval, setUpdateInterval] = useState("");
   const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sitemapLoading, setSitemapLoading] = useState({
@@ -197,7 +196,7 @@ const GenerateSitemap = () => {
       checkRunningJobs(setSitemapLoading, interval?.current);
     }, 2000);
     checkRunningJobs(setSitemapLoading, interval?.current);
-    getPagesCount(setPages, setLoading, setNextUpdate);
+    getPagesCount(setPages, setLoading, setUpdateInterval);
 
     return () => {
       clearInterval(interval?.current);
@@ -211,21 +210,6 @@ const GenerateSitemap = () => {
       </div>
     );
   }
-
-  const rows = pages?.map((item) => {
-    const count = item?.count;
-    const type = item?.type;
-
-    return [
-      [type],
-      <Button loading={sitemapLoading?.[type]} variant="monochromePlain">
-        created
-      </Button>,
-      count,
-      "2022-11-23",
-      nextUpdate ? format(nextUpdate, "yyyy-MM-dd") : "",
-    ];
-  });
 
   return (
     <Card padding={{ xs: 500 }}>
@@ -260,7 +244,7 @@ const GenerateSitemap = () => {
           setRows={setPages}
           rows={pages}
           sitemapLoading={sitemapLoading}
-          nextUpdate={nextUpdate}
+          updateInterval={updateInterval}
         />
       </div>
       <Button
