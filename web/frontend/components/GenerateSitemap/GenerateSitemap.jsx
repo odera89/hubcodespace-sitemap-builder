@@ -222,6 +222,18 @@ const GenerateSitemap = () => {
           updated every 24 hours. Stats will be updated.
         </Text>
       </div>
+      <div className="mb-15">
+        <Text>
+          Sitemap Url:{" "}
+          <Button
+            variant="plain"
+            url="https://hubcode-space-inventory-management.myshopify.com/apps/hubcodespace-sitemap-builder/sitemap.xml"
+          >
+            https://hubcode-space-inventory-management.myshopify.com/apps/hubcodespace-sitemap-builder/sitemap.xml
+          </Button>
+          <strong></strong>
+        </Text>
+      </div>
 
       <div className="mb-10">
         <Text variant="headingLg">Generation Stats</Text>

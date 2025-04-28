@@ -2,7 +2,15 @@ import queryBuilder from "../../db.js";
 
 const checkSitemap = async (req, res) => {
   try {
-    const result = await queryBuilder("jobs-status").distinct("type").limit(4);
+    const shopId = res?.locals?.shopify?.session?.id;
+    const result = await queryBuilder("jobs-status as t")
+      .select("t.*")
+      .whereIn("t.id", function () {
+        this.select(queryBuilder.raw("MAX(id)"))
+          .from("jobs-status")
+          .where("shop_id", shopId)
+          .groupBy("type");
+      });
 
     res.status(200).send({
       data: result,

@@ -86,6 +86,7 @@ const handleSave = async (
         ];
         break;
     }
+
     if (prepareData?.length <= 0) {
       shopify?.toast?.show("Update settings failed.");
       setLoading(false);

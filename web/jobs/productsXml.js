@@ -15,9 +15,11 @@ const productsXml = async (job, done) => {
     const client = await new shopify.api.clients.Graphql({
       session,
     });
+    const shopId = session?.id || "";
 
     await queryBuilder("jobs-status").insert({
       type: "products",
+      shop_id: shopId,
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -138,18 +140,34 @@ const productsXml = async (job, done) => {
       `${process?.cwd()}/sitemap.xml`,
       xmlDataStr
     );
+    const history = await queryBuilder("history")
+      .where({ shop_id: shopId, type: "products" })
+      .first();
 
-    await queryBuilder("history").insert({
-      type: "products",
-      number_of_items: productsArr?.length,
-      created_at: new Date(),
-      updated_at: new Date(),
-    });
-    await queryBuilder("jobs-status").where({ type: "products" }).del();
+    if (history?.id) {
+      await queryBuilder("history").where({ id: history?.id }).update({
+        number_of_items: productsArr?.length,
+        updated_at: new Date(),
+      });
+    } else {
+      await queryBuilder("history").insert({
+        type: "products",
+        number_of_items: productsArr?.length,
+        created_at: new Date(),
+        updated_at: new Date(),
+        shop_id: shopId,
+      });
+    }
+
+    await queryBuilder("jobs-status")
+      .where({ type: "products", shop_id: shopId })
+      .del();
     done(null, { done: true });
   } catch (error) {
     console.log(error, "error");
-    await queryBuilder("jobs-status").where({ type: "products" }).del();
+    await queryBuilder("jobs-status")
+      .where({ type: "products", shop_id: shopId })
+      .del();
   }
 };
 

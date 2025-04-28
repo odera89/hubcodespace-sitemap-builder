@@ -2,6 +2,7 @@ export function up(knex) {
   return knex.schema.createTable("settings", (tbl) => {
     tbl.increments();
     tbl.timestamp("next_update").nullable();
+    tbl.text("shop_id").nullable();
     tbl.timestamp("created_at").nullable();
     tbl.timestamp("updated_at").nullable();
   });

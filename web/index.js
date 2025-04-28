@@ -14,6 +14,8 @@ import checkSitemap from "./api/sitemap/checkSitemap.js";
 import updateSettings from "./api/settings/updateSettings.js";
 import getSettings from "./api/settings/getSettings.js";
 
+import queues from "./queues/config/index.js";
+
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
   10
@@ -70,6 +72,14 @@ app.post("/api/articlesXml", articlesXml);
 app.get("/api/checkSitemap", checkSitemap);
 app.post("/api/updateSettings", updateSettings);
 app.get("/api/getSettings", getSettings);
+
+queues?.scheduleJobQueue.add(
+  {},
+  {
+    repeat: { cron: "* * * * *" },
+    jobId: "sitemap-job-update",
+  }
+);
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));

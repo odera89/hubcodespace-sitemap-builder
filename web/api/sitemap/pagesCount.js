@@ -7,6 +7,9 @@ const pagesCount = async (req, res) => {
     const client = await new shopify.api.clients.Graphql({
       session: res?.locals?.shopify?.session,
     });
+
+    const shopId = res?.locals?.shopify?.session?.id;
+
     const result = await client.query({
       data: {
         query: pagesCountQuery,
@@ -19,19 +22,14 @@ const pagesCount = async (req, res) => {
       ?.reduce((acc, curr) => {
         return acc + curr;
       }, 0);
-    const historyData = await queryBuilder
-      .select("*")
-      .from(function () {
-        this.select("*")
+    const historyData = await queryBuilder("history as t")
+      .select("t.*")
+      .whereIn("t.id", function () {
+        this.select(queryBuilder.raw("MAX(id)"))
           .from("history")
-          .column(
-            queryBuilder.raw(
-              "ROW_NUMBER() OVER (PARTITION BY type ORDER BY created_at DESC) AS rn"
-            )
-          )
-          .as("ranked");
-      })
-      .where("rn", 1);
+          .where("shop_id", shopId)
+          .groupBy("type");
+      });
 
     const data = [
       {
