@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "51877ece492ee8373a064bac89091cc8"
-name = "Hubcodespace Sitemap - DEV"
-handle = "hubcodespace-sitemap-builder-dev"
-application_url = "https://iraq-ind-luke-fly.trycloudflare.com"
+client_id = "2afd641bcb61d434872d0ad14a24fbf8"
+name = "Hubcodespace Sitemap Builder"
+handle = "hubcodespace-sitemap-builder"
+application_url = "https://sitemap-builder.hubcode.dev"
 embedded = true
 
 [build]
@@ -18,9 +18,9 @@ scopes = "read_content,read_products"
 
 [auth]
 redirect_urls = [
-  "https://iraq-ind-luke-fly.trycloudflare.com/auth/callback",
-  "https://iraq-ind-luke-fly.trycloudflare.com/auth/shopify/callback",
-  "https://iraq-ind-luke-fly.trycloudflare.com/api/auth/callback"
+  "https://sitemap-builder.hubcode.dev/auth/callback",
+  "https://sitemap-builder.hubcode.dev/auth/shopify/callback",
+  "https://sitemap-builder.hubcode.dev/api/auth/callback"
 ]
 
 [app_proxy]

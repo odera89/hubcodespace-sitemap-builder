@@ -3,7 +3,8 @@ import { shopifyApp } from "@shopify/shopify-app-express";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-10";
 import dotenv from "dotenv";
 import { PostgreSQLSessionStorage } from "@shopify/shopify-app-session-storage-postgresql";
-dotenv.config({ path: "../.env" });
+// dotenv.config({ path: "../.env" });
+dotenv.config();
 const DB_URL = process?.env?.DB_URL;
 
 // The transactions with Shopify will always be marked as test transactions, unless NODE_ENV is production.
